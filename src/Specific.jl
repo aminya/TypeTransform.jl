@@ -7,7 +7,7 @@ include("subtypes.jl")
 
 """
     @specific
-    
+
 Define specific methods for all of subtypes of type (fix ambiguity error!).
 ```julia
 using Specific
@@ -55,22 +55,49 @@ macro specific(fexpr::Expr)
 
     fmethods = Expr[]
     for (iArg, arg) in enumerate(args)
-        if (arg isa Expr &&
-           arg.head == :(::) &&
-           arg.args[2] isa Expr &&
-           arg.args[2].head == :call &&
-           arg.args[2].args[1] in [:subtypes, :allsubtypes])
+        if arg isa Expr && arg.head == :(::) && arg.args[2] isa Expr
 
-            subtype_function = arg.args[2].args[1]
-            target_type = arg.args[2].args[2]
-            target_subtypes = Core.eval(__module__, quote
-                $subtype_function($target_type)
-            end)
+            if arg.args[2].head == :call &&
+               arg.args[2].args[1] in [:subtypes, :allsubtypes]
+
+                subtype_function = arg.args[2].args[1]
+                target_type = arg.args[2].args[2]
+
+                isCurly =false
+
+            elseif arg.args[2].head == :curly
+
+                # string match is faster
+                strarg = string(arg.args[2])
+                m = match(r"(subtypes|allsubtypes)\((.)\)", strarg)
+                if m === nothing
+                    continue
+                end
+
+                subtype_function = Meta.parse(m.captures[1])
+                target_type = Meta.parse(m.captures[2])
+
+                isCurly =true
+
+            else
+                continue
+            end
+
+            target_subtypes = Core.eval(__module__,
+                quote
+                    $subtype_function($target_type)
+                end)
+
             target_subtypes_len = length(target_subtypes)
             fmethod = Vector{Expr}(undef, target_subtypes_len)
             for (iSubType, TSubtype) in enumerate(target_subtypes)
-                args[iArg].args[2] = TSubtype # replacing with actual subtype
-                fmethod[iSubType] = copy( wrap_fun(f, args, wherestack, body) )
+                # replacing with actual subtype
+                if !isCurly
+                    args[iArg].args[2] = TSubtype
+                else
+                    args[iArg].args[2] = Meta.parse(replace(strarg, m.match=>string(TSubtype)))
+                end
+                fmethod[iSubType] = copy(wrap_fun(f, args, wherestack, body))
             end
             append!(fmethods, fmethod)
         end
