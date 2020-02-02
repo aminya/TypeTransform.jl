@@ -22,6 +22,12 @@ julia> methods(foo)
 ```
 You can use `subtypes` instead of `allsubtypes`, which defines methods only for the direct subtypes.
 
+It is possible to use `allsubtypes`/`subtypes` inside curly expressions like `Union{A, subtypes{B}}` or `Type{allsubtypes{A}}`
+```julia
+@specific function foo_curly2(a, b::Union{T,allsubtypes(A)}, c::T) where {T<:Int64}
+    println("a new method")
+end
+```
 
 # Why? To fix ambiguity error!
 If you run the following program
