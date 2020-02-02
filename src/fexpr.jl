@@ -63,12 +63,12 @@ Returns a function definition expression
 """
 function wrap_fun(f, args, wherestack, body)
     fargs = wrap_fargs(f, args)
-    head =  wrap_where(fargs, wherestack)
+    head =  wrap_head(fargs, wherestack)
     return Expr(:function, head, Expr(:block, body))
 end
 
 function wrap_fun(fargs, wherestack, body)
-    head =  wrap_where(fargs, wherestack)
+    head =  wrap_head(fargs, wherestack)
     return Expr(:function, head, Expr(:block, body))
 end
 
