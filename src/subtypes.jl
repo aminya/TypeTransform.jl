@@ -1,4 +1,4 @@
-export allsubtypes
+export allsubtypes, subtypes
 import InteractiveUtils.subtypes
 ################################################################
 function allsubtypes(T::Type)

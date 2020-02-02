@@ -47,9 +47,7 @@ macro specific(fexpr::Expr)
 
             subtype_function = arg.args[2].args[1]
             target_type = arg.args[2].args[2]
-            target_type_escape = :($(esc(target_type)))
-
-            target_subtypes = Core.eval(__module__, Expr(:call, subtype_function,target_type))
+            target_subtypes = Core.eval(__module__,  Expr(:call, subtype_function, target_type ) )
 
             for T in target_subtypes
                 args[i].args[2] = T # replacing with actual subtype

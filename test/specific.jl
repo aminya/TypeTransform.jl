@@ -11,7 +11,6 @@
 
 end
 
-
 @testset "allsubtypes" begin
     abstract type A end
     abstract type B <:A end
