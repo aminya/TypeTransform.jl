@@ -106,3 +106,8 @@ function wrap_head(fargs, wherestack)
     return head
 end
 ################################################################
+function unwrap_fargs(fargs)
+    f = fargs.args[1]
+    args = fargs.args[2:end]
+    return f, args
+end
