@@ -33,12 +33,10 @@ You can use just `subtypes` instead of `allsubtypes`, and in this situation only
 """
 macro specific(fexpr::Expr)
     macroexpand(__module__, fexpr)
-
     f, args, wherestack, body = unwrap_fun(fexpr, true, true)
 
-    fmethods = Vector{Expr}(undef, 0)
-
-    for (i, arg) in enumerate(args)
+    fmethods = Expr[]
+    for (iArg, arg) in enumerate(args)
         if (arg isa Expr &&
            arg.head == :(::) &&
            arg.args[2] isa Expr &&
@@ -47,19 +45,21 @@ macro specific(fexpr::Expr)
 
             subtype_function = arg.args[2].args[1]
             target_type = arg.args[2].args[2]
-            target_subtypes = Core.eval(__module__,  Expr(:call, subtype_function, target_type ) )
-
-            for T in target_subtypes
-                args[i].args[2] = T # replacing with actual subtype
-
-                fmethod = wrap_fun(f, args, wherestack, body)
-                push!(fmethods, fmethod)
+            target_subtypes = Core.eval(__module__, quote
+                $subtype_function($target_type)
+            end)
+            target_subtypes_len = length(target_subtypes)
+            fmethod = Vector{Expr}(undef, target_subtypes_len)
+            for (iSubType, TSubtype) in enumerate(target_subtypes)
+                args[iArg].args[2] = TSubtype # replacing with actual subtype
+                fmethod[iSubType] = copy( wrap_fun(f, args, wherestack, body) )
             end
+            append!(fmethods, fmethod)
         end
     end
 
     out = quote
-        $ ((esc.(fmethods))...)
+        $(esc.(fmethods)...)
     end
 
     return out
