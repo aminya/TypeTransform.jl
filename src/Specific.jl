@@ -89,7 +89,7 @@ macro specific(fexpr::Expr)
                 continue
             end
 
-            target_subtypes = Core.eval(__module__,
+            target_subtypes =__module__.eval(
                 quote
                     $subtype_function($target_type)
                 end)
