@@ -97,3 +97,12 @@ function unwrap_head(head)
     fargs, wherestack
 end
 
+function wrap_head(fargs, wherestack)
+    for w in Iterators.reverse(wherestack)
+        fargs = Expr(:where, fargs, w)
+        # fargs = Expr(:where, fargs, esc(w))
+    end
+    head = fargs
+    return head
+end
+################################################################
