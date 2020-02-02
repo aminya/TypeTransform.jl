@@ -108,6 +108,10 @@ macro specific(fexpr::Expr)
             append!(fmethods, fmethod)
         end
     end
+    if isempty(fmethods)
+        error("No method defined")
+    end
+    print(fmethods)
 
     out = quote
         $(esc.(fmethods)...)
