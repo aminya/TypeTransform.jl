@@ -1,3 +1,4 @@
+export unwrap_fun, wrap_fun, unwrap_head, wrap_head, unwrap_fargs, wrap_fargs
 ################################################################
 """
     head, body = unwrap_fun(fexpr)
