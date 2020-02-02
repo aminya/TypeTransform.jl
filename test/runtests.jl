@@ -2,5 +2,8 @@ using Specific
 using Test
 
 @testset "Specific.jl" begin
-    # Write your tests here.
+
+    include("fexpr.jl")
+    include("specific.jl")
+
 end
