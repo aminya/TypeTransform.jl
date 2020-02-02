@@ -4,7 +4,7 @@
     abstract type C <:B end
 
     @specific function foo(a, b::subtypes(A), c::T) where {T<:Int64}
-           print("vector method")
+        println("a new method")
     end
 
     @test length(methods(foo)) == 1
@@ -18,7 +18,7 @@ end
     abstract type C <:B end
 
     @specific function foo_all(a, b::allsubtypes(A), c::T) where {T<:Int64}
-           print("vector method")
+        println("a new method")
     end
 
     @test length(methods(foo_all)) == 3
