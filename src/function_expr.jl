@@ -111,3 +111,9 @@ function unwrap_fargs(fargs)
     args = fargs.args[2:end]
     return f, args
 end
+
+function wrap_fargs(f, args)
+    fargs = :($f($((args)...)))
+    return fargs
+end
+################################################################
