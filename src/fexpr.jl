@@ -1,8 +1,8 @@
-export unwrap_fun, wrap_fun, unwrap_head, wrap_head, unwrap_fargs, wrap_fargs
+export unwrap_fun, wrap_fun, unwrap_head, wrap_head, unwrap_fcall, wrap_fcall
 ################################################################
 """
     head, body = unwrap_fun(fexpr)
-    fargs, wherestack, body = unwrap_fun(fexpr,true)
+    fcall, wherestack, body = unwrap_fun(fexpr,true)
     f, args, wherestack, body = unwrap_fun(fexpr, true, true)
 
 Unwraps function expression.
@@ -31,12 +31,12 @@ function unwrap_fun(expr::Expr, should_unwrap_head::Bool)
     end
 
     head = fexpr.args[1]
-    fargs, wherestack = unwrap_head(head)
+    fcall, wherestack = unwrap_head(head)
     body = fexpr.args[2]
-    return fargs, wherestack, body
+    return fcall, wherestack, body
 end
 
-function unwrap_fun(expr::Expr, should_unwrap_head::Bool, should_unwrap_fargs::Bool)
+function unwrap_fun(expr::Expr, should_unwrap_head::Bool, should_unwrap_fcall::Bool)
     if expr.head in (:function, :(=))
         fexpr = expr
     elseif expr.head == :block
@@ -46,8 +46,8 @@ function unwrap_fun(expr::Expr, should_unwrap_head::Bool, should_unwrap_fargs::B
     end
 
     head = fexpr.args[1]
-    fargs, wherestack = unwrap_head(head)
-    f, args = unwrap_fargs(fargs)
+    fcall, wherestack = unwrap_head(head)
+    f, args = unwrap_fcall(fcall)
 
     body = fexpr.args[2]
     return f, args, wherestack, body
@@ -55,20 +55,20 @@ end
 ################################################################
 """
     fexpr = wrap_fun(f, args, wherestack, body)
-    fexpr = wrap_fun(fargs, wherestack, body)
+    fexpr = wrap_fun(fcall, wherestack, body)
     fexpr = wrap_fun(head, body)
     fexpr = wrap_fun(fexpr)
 
 Returns a function definition expression
 """
 function wrap_fun(f, args, wherestack, body)
-    fargs = wrap_fargs(f, args)
-    head =  wrap_head(fargs, wherestack)
+    fcall = wrap_fcall(f, args)
+    head =  wrap_head(fcall, wherestack)
     return Expr(:function, head, Expr(:block, body))
 end
 
-function wrap_fun(fargs, wherestack, body)
-    head =  wrap_head(fargs, wherestack)
+function wrap_fun(fcall, wherestack, body)
+    head =  wrap_head(fcall, wherestack)
     return Expr(:function, head, Expr(:block, body))
 end
 
@@ -94,27 +94,27 @@ function unwrap_head(head)
         push!(wherestack, head.args[2])
         head = head.args[1]
     end
-    fargs = head
-    fargs, wherestack
+    fcall = head
+    fcall, wherestack
 end
 
-function wrap_head(fargs, wherestack)
+function wrap_head(fcall, wherestack)
     for w in Iterators.reverse(wherestack)
-        fargs = Expr(:where, fargs, w)
-        # fargs = Expr(:where, fargs, esc(w))
+        fcall = Expr(:where, fcall, w)
+        # fcall = Expr(:where, fcall, esc(w))
     end
-    head = fargs
+    head = fcall
     return head
 end
 ################################################################
-function unwrap_fargs(fargs)
-    f = fargs.args[1]
-    args = fargs.args[2:end]
+function unwrap_fcall(fcall)
+    f = fcall.args[1]
+    args = fcall.args[2:end]
     return f, args
 end
 
-function wrap_fargs(f, args)
-    fargs = :($f($((args)...)))
-    return fargs
+function wrap_fcall(f, args)
+    fcall = :($f($((args)...)))
+    return fcall
 end
 ################################################################
