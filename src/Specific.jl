@@ -30,8 +30,8 @@ macro specific(fexpr::Expr)
 
                 for T in $subtype_function($(arg.args[2].args[2]))
                     $argsout[$i].args[2] = T # replacing with actual subtype
-                    
-                    wrap_fun($fsymbol, $argsout, $wherestack, $bodyexpr)
+
+                    eval(wrap_fun($fsymbol, $argsout, $wherestack, $bodyexpr))
                 end
 
             end
