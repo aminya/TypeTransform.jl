@@ -1,3 +1,5 @@
+export allsubtypes
+import InteractiveUtils.subtypes
 ################################################################
 function allsubtypes(T::Type)
     t = Set{Type}()
