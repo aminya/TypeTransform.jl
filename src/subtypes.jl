@@ -2,10 +2,11 @@ export allsubtypes
 import InteractiveUtils.subtypes
 ################################################################
 function allsubtypes(T::Type)
-    t = Set{Type}()
+    t = Type[]
     push!(t, T) # include itself
     allsubtypes.(subtypes(T), Ref(t))
-    t
+
+    return unique(t)
 end
 function allsubtypes(T, t)
     # T is an element
