@@ -13,3 +13,8 @@
     # @test fexp1 == fexpr
 
 end
+
+
+fexpr = :( function foo(a, b::subtypes(T1), c::T2) where {T2<:Int64}
+       print("vector method")
+ end)
