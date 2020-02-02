@@ -36,11 +36,7 @@ macro specific(fexpr::Expr)
 
     f, args, wherestack, body = unwrap_fun(fexpr, true, true)
 
-    fsymbol = QuoteNode(f)
-    bodyexpr = QuoteNode(body)
-
-    argsubtype = Vector{Expr}(undef, 0)
-    argsout = Symbol(f, "_argsout")
+    fmethods = Vector{Expr}(undef, 0)
 
     for (i, arg) in enumerate(args)
         if (arg isa Expr &&
@@ -50,22 +46,25 @@ macro specific(fexpr::Expr)
            arg.args[2].args[1] in [:subtypes, :allsubtypes])
 
             subtype_function = arg.args[2].args[1]
+            target_type = arg.args[2].args[2]
+            target_type_escape = :($(esc(target_type)))
 
-            argsubtypeI = quote
-                $argsout = $(args)
+            target_subtypes = Core.eval(__module__, Expr(:call, subtype_function,target_type))
 
-                for T in $subtype_function($(arg.args[2].args[2]))
-                    $argsout[$i].args[2] = T # replacing with actual subtype
+            for T in target_subtypes
+                args[i].args[2] = T # replacing with actual subtype
 
-                    eval(wrap_fun($fsymbol, $argsout, $wherestack, $bodyexpr))
-                end
-
+                fmethod = wrap_fun(f, args, wherestack, body)
+                push!(fmethods, fmethod)
             end
-
-            push!(argsubtype, argsubtypeI)
         end
     end
-    return :($(esc(argsubtype[1]))) # only one
+
+    out = quote
+        $ ((esc.(fmethods))...)
+    end
+
+    return out
 end
 
 end
