@@ -1,6 +1,6 @@
-# Specific
+# TypeTransform
 
-[![Build Status](https://github.com/aminya/Specific.jl/workflows/CI/badge.svg)](https://github.com/aminya/Specific.jl/actions)
+[![Build Status](https://github.com/aminya/TypeTransform.jl/workflows/CI/badge.svg)](https://github.com/aminya/TypeTransform.jl/actions)
 
 Define specific methods for all of subtypes of type (fix ambiguity error!).
 ```julia
