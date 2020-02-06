@@ -25,6 +25,7 @@ abstract type C <:B end
     println("a new method")
 end
 ```
+Since `allsubtypes(A)` returns the array of types `[A, B, C]`, three methods are defined
 ```julia
 julia> methods(foo)
 # 3 methods for generic function "foo":
@@ -32,9 +33,9 @@ julia> methods(foo)
 [2] foo(a, b::B) in Main at none:2
 [3] foo(a, b::A) in Main at none:2
 ```
-You can use `subtypes()` instead of `allsubtypes()`, which defines methods only for the direct subtypes.
+Note that you could use `subtypes()` instead of `allsubtypes()`, which defines methods only for the direct subtypes (`[B]` in this case).
 
-If you want that only specific functions to be transformed by `@transform`, give an `Array` of `Symbol`s that contain the function names you want to be transformed.
+If you want that only specific functions to be considered in transformation by `@transform`, give an `Array` of `Symbol`s that contains the function names you want to be transformed.
 
 ```julia
 @transform [:subtypes, :allsubtypes], function foo_array(a, b::allsubtypes(A))
@@ -69,7 +70,6 @@ foo(a, b::Type{B}) = print("B method")
 # my general vector method
 @transform foo(a::Vector, b::allsubtypes(A)) = print("vector method")
 ```
-
 """
 macro transform(expr::Expr)
     #TODO: support for multiple function transforms in a @transform
