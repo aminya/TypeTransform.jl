@@ -4,9 +4,7 @@
 
 Transform the given type to another type during defining a method.
 
-Use `@transform` and the function you want to transform the type to another type.
-
-Your function should return an `Array` of types that you want the method to be defined for.
+Use `@transform` and the function that transforms the type to another type. The function should return an `Array` of types that you want the method to be defined for.
 
 For example, we use `allsubtypes()` type transform function to define specific methods for all of subtypes of a given type (fix ambiguity error!).
 ```julia
@@ -19,6 +17,7 @@ abstract type C <:B end
     println("a new method")
 end
 ```
+Since `allsubtypes(A)` returns the array of types `[A, B, C]`, three methods are defined
 ```julia
 julia> methods(foo)
 # 3 methods for generic function "foo":
@@ -26,9 +25,9 @@ julia> methods(foo)
 [2] foo(a, b::B) in Main at none:2
 [3] foo(a, b::A) in Main at none:2
 ```
-You can use `subtypes()` instead of `allsubtypes()`, which defines methods only for the direct subtypes.
+Note that you could use `subtypes()` instead of `allsubtypes()`, which defines methods only for the direct subtypes (`[B]` in this case).
 
-If you want that only specific functions to be transformed by `@transform`, give an `Array` of `Symbol`s that contain the function names you want to be transformed.
+If you want that only specific functions to be considered in transformation by `@transform`, give an `Array` of `Symbol`s that contains the function names you want to be transformed.
 
 ```julia
 @transform [:subtypes, :allsubtypes], function foo_array(a, b::allsubtypes(A))
