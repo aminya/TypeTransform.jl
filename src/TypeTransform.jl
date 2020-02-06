@@ -2,6 +2,10 @@ module TypeTransform
 macro transform(expr::Expr)
     #TODO: support for multiple function transforms in a @transform
 
+    macroexpand(__module__, expr)
+    if expr.head == :block
+        expr = expr.args[2]
+    end
 
     if expr.head == :tuple # some functions are specified
         funclist = eval(expr.args[1])
