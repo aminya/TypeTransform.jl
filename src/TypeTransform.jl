@@ -2,6 +2,17 @@ module TypeTransform
 macro transform(expr::Expr)
     #TODO: support for multiple function transforms in a @transform
 
+
+    if expr.head == :tuple # some functions are specified
+        funclist = eval(expr.args[1])
+        isfunclist = true
+
+        fexpr = expr.args[2]
+    else
+        fexpr = expr
+        isfunclist = false
+    end
+
     f, args, wherestack, body = unwrap_fun(fexpr, true, true)
 
     fmethods = Expr[]
