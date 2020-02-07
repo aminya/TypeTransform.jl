@@ -95,10 +95,9 @@ macro transform(expr::Expr)
 
             if arg.args[2].head == :call
 
-                if isfunclist # skip this function if it is not in funclist
-                    if !(arg.args[2].args[1] in funclist)
-                        continue
-                    end
+                # skip this function if it is not in funclist
+                if isfunclist && !(arg.args[2].args[1] in funclist)
+                    continue
                 end
 
                 funcname = arg.args[2].args[1]
@@ -119,10 +118,9 @@ macro transform(expr::Expr)
 
                 funcname = Meta.parse(m.captures[1])
 
-                if isfunclist # skip this function if it is not in funclist
-                    if !(funcname in funclist)
-                        continue
-                    end
+                 # skip this function if it is not in funclist
+                if isfunclist && !(funcname in funclist)
+                    continue
                 end
 
                 intype = Meta.parse(m.captures[2])
