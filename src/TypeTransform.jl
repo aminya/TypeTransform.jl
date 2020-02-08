@@ -41,9 +41,9 @@ If you want that only specific functions to be considered in transformation by `
 end
 ```
 
-It is possible to use the function names inside curly expressions like `Union{A, subtypes{B}}` or `Type{allsubtypes{A}}`
+It is possible to use the function names inside curly expressions like `Union{A, subtypes{B}}` or `Type{allsubtypes{A}}` or use arguments without a name:
 ```julia
-@transform function foo_curly(a, b::Union{T,allsubtypes(A)}, c::T) where {T<:Int64}
+@transform function foo_curly(a, ::Union{T,allsubtypes(A)}, c::T) where {T<:Int64}
     println("a new method")
 end
 ```
