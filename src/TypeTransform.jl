@@ -1,6 +1,6 @@
 module TypeTransform
 
-export @transform
+export @transform, transform
 
 include("fexpr.jl")
 include("subtypes.jl")
@@ -71,8 +71,13 @@ foo(a, b::Type{B}) = print("B method")
 """
 macro transform(expr::Expr)
     #TODO: support for multiple function transforms in a @transform
+    modul = __module__
+    macroexpand(modul, expr)
+    out = transform(modul, expr)
+    return out
+end
 
-    macroexpand(__module__, expr)
+function transform(modul::Module, expr)
     if expr.head == :block
         expr = expr.args[2]
     end
@@ -131,7 +136,7 @@ macro transform(expr::Expr)
                 continue
             end
 
-            outtypes =Core.eval(__module__,
+            outtypes =Core.eval(modul,
                 quote
                     $funcname($intype)
                 end)
@@ -158,7 +163,6 @@ macro transform(expr::Expr)
     out = quote
         $(esc.(fmethods)...)
     end
-
     return out
 end
 
