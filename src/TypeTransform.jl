@@ -114,9 +114,9 @@ function transform(modul::Module, expr)
 
                 # string match is faster
                 strarg = string(arg.args[2])
+                
                 # match any function name
-                m = match(r"([a-zA-Z\_][a-zA-Z0-9\_]+)\((.)\)", strarg)
-
+                m = match(r"([a-zA-Z\_][a-zA-Z0-9\_]*)\((.*)\)", strarg)
                 if m === nothing
                     continue
                 end
