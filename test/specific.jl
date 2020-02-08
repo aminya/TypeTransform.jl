@@ -36,6 +36,15 @@ end
 
 end
 
+@testset "noname arguemnts" begin
+    @transform function foo_noname(a, ::allsubtypes(A))
+        println("a new method")
+    end
+
+    @test length(methods(foo_noname)) == 3
+end
+
+
 @testset "array of functions" begin
     @transform [:subtypes, :allsubtypes], function foo_array(a, b::allsubtypes(A))
         println("a new method")

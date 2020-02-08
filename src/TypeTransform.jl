@@ -96,25 +96,26 @@ function transform(modul::Module, expr)
 
     fmethods = Expr[]
     for (iArg, arg) in enumerate(args)
-        if arg isa Expr && arg.head == :(::) && arg.args[2] isa Expr
+        if arg isa Expr && arg.head == :(::) &&
+            arg.args[end] isa Expr
 
-            if arg.args[2].head == :call
+            if arg.args[end].head == :call
 
                 # skip this function if it is not in funclist
-                if isfunclist && !(arg.args[2].args[1] in funclist)
+                if isfunclist && !(arg.args[end].args[1] in funclist)
                     continue
                 end
 
-                funcname = arg.args[2].args[1]
-                intype = arg.args[2].args[2]
+                funcname = arg.args[end].args[1]
+                intype = arg.args[end].args[2]
 
                 isCurly =false
 
-            elseif arg.args[2].head == :curly
+            elseif arg.args[end].head == :curly
 
                 # string match is faster
-                strarg = string(arg.args[2])
-                
+                strarg = string(arg.args[end])
+
                 # match any function name
                 m = match(r"([a-zA-Z\_][a-zA-Z0-9\_]*)\((.*)\)", strarg)
                 if m === nothing
@@ -146,9 +147,9 @@ function transform(modul::Module, expr)
             for (iouttype, outtypeI) in enumerate(outtypes)
                 # replacing with actual trasformed type
                 if !isCurly
-                    args[iArg].args[2] = outtypeI
+                    args[iArg].args[end] = outtypeI
                 else
-                    args[iArg].args[2] = Meta.parse(replace(strarg, m.match=>string(outtypeI)))
+                    args[iArg].args[end] = Meta.parse(replace(strarg, m.match=>string(outtypeI)))
                 end
                 fmethod[iouttype] = copy(wrap_fun(f, args, wherestack, body))
             end
