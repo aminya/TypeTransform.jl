@@ -13,7 +13,7 @@ function unwrap_fun(expr::Expr)
     elseif expr.head == :block
         fexpr = expr.args[2] # separate fexpr from block
     else
-        error("expression not supported")
+        error("Expression is not supported")
     end
 
     head = fexpr.args[1]
@@ -27,7 +27,7 @@ function unwrap_fun(expr::Expr, should_unwrap_head::Bool)
     elseif expr.head == :block
         fexpr = expr.args[2] # separate fexpr from block
     else
-        error("expression not supported")
+        error("Expression is not supported")
     end
 
     head = fexpr.args[1]
@@ -42,7 +42,7 @@ function unwrap_fun(expr::Expr, should_unwrap_head::Bool, should_unwrap_fcall::B
     elseif expr.head == :block
         fexpr = expr.args[2] # separate fexpr from block
     else
-        error("expression not supported")
+        error("Expression is not supported")
     end
 
     head = fexpr.args[1]
@@ -83,7 +83,7 @@ function wrap_fun(fexpr::Expr)
         fexpr = fexpr.args[2] # separate fexpr from block
         return fexpr
     else
-        error("expression not supported")
+        error("Expression is not supported")
     end
 end
 
@@ -109,7 +109,7 @@ end
 ################################################################
 function unwrap_fcall(fcall::Expr)
     if !(fcall.head == :call)
-        error("expression is not supported")
+        error("Expression is not supported")
     end
     f = fcall.args[1]
     args = fcall.args[2:end]
