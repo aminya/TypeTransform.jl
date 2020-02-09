@@ -74,6 +74,7 @@ macro transform(expr::Expr)
     modul = __module__
     macroexpand(modul, expr)
     out = transform(modul, expr)
+
     return out
 end
 
@@ -162,6 +163,7 @@ function transform(modul::Module, expr)
     # print(fmethods)
 
     out = quote
+        Base.@__doc__(function $f end) # supports docuementation
         $(esc.(fmethods)...)
     end
     return out
