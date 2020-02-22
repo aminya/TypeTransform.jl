@@ -4,6 +4,7 @@ export @transform, transform
 
 include("fexpr.jl")
 include("subtypes.jl")
+include("inverse_hasmethod.jl")
 
 """
     @transform

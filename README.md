@@ -27,6 +27,13 @@ julia> methods(foo)
 ```
 Note that you could use `subtypes()` instead of `allsubtypes()`, which defines methods only for the direct subtypes (`[B]` in this case).
 
+Another example would be using `inverse_hasmethod`
+```julia
+@transform function foo(a, b::inverse_hasmethod(string))
+    println("a new method")
+end
+```
+
 If you want that only specific functions to be considered in transformation by `@transform`, give an `Array` of `Symbol`s that contains the function names you want to be transformed.
 
 ```julia
@@ -43,6 +50,7 @@ end
 ```
 
 # Motivation
+## allsubtypes
 The first motivation for this package was to fix ambiguity error by defining specific methods.
 
 If you run the following program
@@ -61,4 +69,11 @@ foo(a, b::Type{B}) = print("B method")
 ```julia
 # my general vector method
 @transform foo(a::Vector, b::allsubtypes(A)) = print("vector method")
+```
+
+## inverse_hasmethod
+```julia
+@transform function foo(a, b::inverse_hasmethod(string))
+    println("a new method")
+end
 ```
